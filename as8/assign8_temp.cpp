@@ -27,9 +27,9 @@ using namespace std;
 
 
 //object related information
-int verts, faces, norms;    // Number of vertices, faces and normals in the system
-point *vertList, *normList; // Vertex and Normal Lists
-faceStruct *faceList;	    // Face List
+int verts[3], faces[3], norms[3];    // Number of vertices, faces and normals in the system
+point *vertList[3], *normList[3]; // Vertex and Normal Lists
+faceStruct *faceList[3];	    // Face List
 
 
 //Illimunation and shading related declerations
@@ -41,7 +41,7 @@ int lightSource = 0;
 int program=-1;
 
 float originX, originY, originZ;
-
+int selection = 0;
 //Parameters for Copper (From: "Computer Graphics Using OpenGL" BY F.S. Hill, Jr.) 
 //GLfloat ambient_cont [] = {0.19125,0.0735,0.0225};
 GLfloat diffuse_cont [] = {0.7038,0.27048,0.0828};
@@ -69,18 +69,18 @@ bool MouseLeft = false;
 bool MouseRight = false;
 
 
-void findOrigin() {
-	float maxX = vertList[faceList[0].v1].x;
-	float minX = vertList[faceList[0].v1].x;
-	float maxY = vertList[faceList[0].v1].y;
-	float minY = vertList[faceList[0].v1].y;
-	float maxZ = vertList[faceList[0].v1].z;
-	float minZ = vertList[faceList[0].v1].z;
-	for (int i = 0; i < faces; i++)
+void findOrigin(int slot) {
+	float maxX = vertList[slot][faceList[slot][0].v1].x;
+	float minX = vertList[slot][faceList[slot][0].v1].x;
+	float maxY = vertList[slot][faceList[slot][0].v1].y;
+	float minY = vertList[slot][faceList[slot][0].v1].y;
+	float maxZ = vertList[slot][faceList[slot][0].v1].z;
+	float minZ = vertList[slot][faceList[slot][0].v1].z;
+	for (int i = 0; i < faces[slot]; i++)
 	{
 
 		point v;
-		v = vertList[faceList[i].v1];
+		v = vertList[slot][faceList[slot][i].v1];
 		if (v.x < minX) {
 			minX = v.x;
 		}
@@ -100,7 +100,7 @@ void findOrigin() {
 			maxY = v.y;
 		}
 
-		v = vertList[faceList[i].v2];
+		v = vertList[slot][faceList[slot][i].v2];
 		if (v.x < minX) {
 			minX = v.x;
 		}
@@ -119,7 +119,7 @@ void findOrigin() {
 		if (v.x > maxX) {
 			maxY = v.y;
 		}
-		v = vertList[faceList[i].v3];
+		v = vertList[slot][faceList[slot][i].v3];
 		if (v.x < minX) {
 			minX = v.x;
 		}
@@ -145,9 +145,30 @@ void findOrigin() {
 	originZ = (maxZ + minZ) / 2;
 }
 
+void getSphericalTex(point p) {
+	point v = { p.x - originX, p.y - originY, p.z - originZ };
+	float vmag = sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+	v = { v.x / vmag, v.y / vmag, v.z / vmag };
+	float costheta = v.y;
+	float cosphi = v.z;
+	//printf("x: %f y: %f z: %f\n", v.x, v.y, v.z);
+	//printf("costheta: %f cosphi: %f\n", costheta, cosphi);
+	glTexCoord2f((costheta + 1)/2, (cosphi + 1)/2);
+}
+
 
 void DisplayFunc(void) 
 {
+	int slot;
+	if (selection == 0 || selection == 9) {
+		slot = 0;
+	}
+	else if (selection == 1 || selection == 3 || selection == 5 || selection == 7 || selection == 10) {
+		slot = 1;
+	}
+	else {
+		slot = 2;
+	}
     GLuint id ;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -209,33 +230,34 @@ void DisplayFunc(void)
 
     delete TGAImage;
 
-	findOrigin();
+	findOrigin(slot);
 	printf("originX: %f originY: %f originZ: %f\n", originX, originY, originZ);
-	for (int i = 0; i < faces; i++)
+	for (int i = 0; i < faces[slot]; i++)
 	{
 		
 		glBegin(GL_TRIANGLES);
 			point v1, v2, v3, n1, n2, n3;
-			v1 = vertList[faceList[i].v1];
-			v2 = vertList[faceList[i].v2];
-			v3 = vertList[faceList[i].v3];
-			n1 = vertList[faceList[i].v1];
-			n2 = vertList[faceList[i].v2];
-			n3 = vertList[faceList[i].v3];
+			v1 = vertList[slot][faceList[slot][i].v1];
+			v2 = vertList[slot][faceList[slot][i].v2];
+			v3 = vertList[slot][faceList[slot][i].v3];
+			n1 = vertList[slot][faceList[slot][i].v1];
+			n2 = vertList[slot][faceList[slot][i].v2];
+			n3 = vertList[slot][faceList[slot][i].v3];
 			glNormal3f(n1.x, n1.y, n1.z);
-			//if (i % 4 == 0) {
-				glTexCoord2f(v1.x, v1.y);
-			//}
+			//glTexCoord2f(v1.x, v1.y);
+			getSphericalTex(v1);
+
 			glVertex3f(v1.x, v1.y, v1.z);
 			glNormal3f(n2.x, n2.y, n2.z);
-			//if (i % 4 == 0) {
-				glTexCoord2f(v2.x, v2.y);
-			//}
+		
+			//glTexCoord2f(v2.x, v2.y);
+			getSphericalTex(v2);
+		
 			glVertex3f(v2.x, v2.y, v2.z);
 			glNormal3f(n3.x, n3.y, n3.z);
-			//if (i % 4 == 0) {
-				glTexCoord2f(v3.x, v3.y);
-			//}
+			
+			//glTexCoord2f(v3.x, v3.y);
+			getSphericalTex(v3);
 			glVertex3f(v3.x, v3.y, v3.z);
 		glEnd();
 
@@ -300,7 +322,7 @@ void KeyboardFunc(unsigned char key, int x, int y)
 	{
 	case 'A':
 	case 'a':
-		ShowAxes = !ShowAxes;
+		selection = (selection + 1) % 11;
 		break;
 	case 'Q':
 	case 'q':
@@ -374,8 +396,9 @@ int main(int argc, char **argv)
 
 	
 	setShaders();
-	
-	meshReader("teapot.obj", 1);
+	meshReader("sphere.obj", 1, 0); //temp
+	meshReader("sphere.obj", 1, 1);
+	meshReader("teapot.obj", 1, 2);
 
 	glutMainLoop();
 
@@ -600,7 +623,7 @@ char *shaderFileRead(char *fn) {
 	return content;
 }
 
-void meshReader (char *filename,int sign)
+void meshReader (char *filename,int sign, int slot)
 {
   float x,y,z,len;
   int i;
@@ -622,11 +645,11 @@ void meshReader (char *filename,int sign)
       fscanf(fp,"%c %f %f %f\n",&letter,&x,&y,&z);
       if (letter == 'v')
 	  {
-		  verts++;
+		  verts[slot]++;
 	  }
       else
 	  {
-		  faces++;
+		  faces[slot]++;
 	  }
    }
 
@@ -636,48 +659,48 @@ void meshReader (char *filename,int sign)
   printf("faces : %d\n", faces);
 
   // Dynamic allocation of vertex and face lists
-  faceList = (faceStruct *)malloc(sizeof(faceStruct)*faces);
-  vertList = (point *)malloc(sizeof(point)*verts);
-  normList = (point *)malloc(sizeof(point)*verts);
+  faceList[slot] = (faceStruct *)malloc(sizeof(faceStruct)*faces[slot]);
+  vertList[slot] = (point *)malloc(sizeof(point)*verts[slot]);
+  normList[slot] = (point *)malloc(sizeof(point)*verts[slot]);
 
   fp = fopen(filename, "r");
 
   // Read the veritces
-  for(i = 0;i < verts;i++)
+  for(i = 0;i < verts[slot];i++)
     {
       fscanf(fp,"%c %f %f %f\n",&letter,&x,&y,&z);
-      vertList[i].x = x;
-      vertList[i].y = y;
-      vertList[i].z = z;
+      vertList[slot][i].x = x;
+      vertList[slot][i].y = y;
+      vertList[slot][i].z = z;
     }
 
   // Read the faces
-  for(i = 0;i < faces;i++)
+  for(i = 0;i < faces[slot];i++)
     {
       fscanf(fp,"%c %d %d %d\n",&letter,&ix,&iy,&iz);
-      faceList[i].v1 = ix - 1;
-      faceList[i].v2 = iy - 1;
-      faceList[i].v3 = iz - 1;
+      faceList[slot][i].v1 = ix - 1;
+      faceList[slot][i].v2 = iy - 1;
+      faceList[slot][i].v3 = iz - 1;
     }
   fclose(fp);
 
 
   // The part below calculates the normals of each vertex
-  normCount = (int *)malloc(sizeof(int)*verts);
-  for (i = 0;i < verts;i++)
+  normCount = (int *)malloc(sizeof(int)*verts[slot]);
+  for (i = 0;i < verts[slot];i++)
     {
-      normList[i].x = normList[i].y = normList[i].z = 0.0;
+      normList[slot][i].x = normList[slot][i].y = normList[slot][i].z = 0.0;
       normCount[i] = 0;
     }
 
-  for(i = 0;i < faces;i++)
+  for(i = 0;i < faces[slot];i++)
     {
-      v1.x = vertList[faceList[i].v2].x - vertList[faceList[i].v1].x;
-      v1.y = vertList[faceList[i].v2].y - vertList[faceList[i].v1].y;
-      v1.z = vertList[faceList[i].v2].z - vertList[faceList[i].v1].z;
-      v2.x = vertList[faceList[i].v3].x - vertList[faceList[i].v2].x;
-      v2.y = vertList[faceList[i].v3].y - vertList[faceList[i].v2].y;
-      v2.z = vertList[faceList[i].v3].z - vertList[faceList[i].v2].z;
+      v1.x = vertList[slot][faceList[slot][i].v2].x - vertList[slot][faceList[slot][i].v1].x;
+      v1.y = vertList[slot][faceList[slot][i].v2].y - vertList[slot][faceList[slot][i].v1].y;
+      v1.z = vertList[slot][faceList[slot][i].v2].z - vertList[slot][faceList[slot][i].v1].z;
+      v2.x = vertList[slot][faceList[slot][i].v3].x - vertList[slot][faceList[slot][i].v2].x;
+      v2.y = vertList[slot][faceList[slot][i].v3].y - vertList[slot][faceList[slot][i].v2].y;
+      v2.z = vertList[slot][faceList[slot][i].v3].z - vertList[slot][faceList[slot][i].v2].z;
 
       crossP.x = v1.y*v2.z - v1.z*v2.y;
       crossP.y = v1.z*v2.x - v1.x*v2.z;
@@ -689,24 +712,24 @@ void meshReader (char *filename,int sign)
       crossP.y = -crossP.y/len;
       crossP.z = -crossP.z/len;
 
-      normList[faceList[i].v1].x = normList[faceList[i].v1].x + crossP.x;
-      normList[faceList[i].v1].y = normList[faceList[i].v1].y + crossP.y;
-      normList[faceList[i].v1].z = normList[faceList[i].v1].z + crossP.z;
-      normList[faceList[i].v2].x = normList[faceList[i].v2].x + crossP.x;
-      normList[faceList[i].v2].y = normList[faceList[i].v2].y + crossP.y;
-      normList[faceList[i].v2].z = normList[faceList[i].v2].z + crossP.z;
-      normList[faceList[i].v3].x = normList[faceList[i].v3].x + crossP.x;
-      normList[faceList[i].v3].y = normList[faceList[i].v3].y + crossP.y;
-      normList[faceList[i].v3].z = normList[faceList[i].v3].z + crossP.z;
-      normCount[faceList[i].v1]++;
-      normCount[faceList[i].v2]++;
-      normCount[faceList[i].v3]++;
+      normList[slot][faceList[slot][i].v1].x = normList[slot][faceList[slot][i].v1].x + crossP.x;
+      normList[slot][faceList[slot][i].v1].y = normList[slot][faceList[slot][i].v1].y + crossP.y;
+      normList[slot][faceList[slot][i].v1].z = normList[slot][faceList[slot][i].v1].z + crossP.z;
+      normList[slot][faceList[slot][i].v2].x = normList[slot][faceList[slot][i].v2].x + crossP.x;
+      normList[slot][faceList[slot][i].v2].y = normList[slot][faceList[slot][i].v2].y + crossP.y;
+      normList[slot][faceList[slot][i].v2].z = normList[slot][faceList[slot][i].v2].z + crossP.z;
+      normList[slot][faceList[slot][i].v3].x = normList[slot][faceList[slot][i].v3].x + crossP.x;
+      normList[slot][faceList[slot][i].v3].y = normList[slot][faceList[slot][i].v3].y + crossP.y;
+      normList[slot][faceList[slot][i].v3].z = normList[slot][faceList[slot][i].v3].z + crossP.z;
+      normCount[faceList[slot][i].v1]++;
+      normCount[faceList[slot][i].v2]++;
+      normCount[faceList[slot][i].v3]++;
     }
-  for (i = 0;i < verts;i++)
+  for (i = 0;i < verts[slot];i++)
     {
-      normList[i].x = (float)sign*normList[i].x / (float)normCount[i];
-      normList[i].y = (float)sign*normList[i].y / (float)normCount[i];
-      normList[i].z = (float)sign*normList[i].z / (float)normCount[i];
+      normList[slot][i].x = (float)sign*normList[slot][i].x / (float)normCount[i];
+      normList[slot][i].y = (float)sign*normList[slot][i].y / (float)normCount[i];
+      normList[slot][i].z = (float)sign*normList[slot][i].z / (float)normCount[i];
     }
 
 }

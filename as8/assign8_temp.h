@@ -24,6 +24,6 @@ void setParameters(GLuint program);
 void error_exit(int status, char *text);
 int PrintOGLError(char *file, int line);
 void setShaders() ;
-void meshReader (char *filename,int sign);
+void meshReader (char *filename,int sign, int slot);
 
 #endif 
