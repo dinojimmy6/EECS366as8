@@ -22,7 +22,76 @@ Spring 2006
 #define PI 3.14159265359
 
 #define PrintOpenGLError()::PrintOGLError(__FILE__, __LINE__)
+class Vector
+{
+public:
+	float x, y, z, w;
 
+	Vector() { x = 0; y = 0; z = 0; w = 1; }
+	Vector(float xa, float ya, float za)
+	{
+		x = xa; y = ya; z = za; w = 1.0;
+	}
+	Vector(float xa, float ya, float za, float wa)
+	{
+		x = xa; y = ya; z = za; w = wa;
+	}
+	Vector(point p) {
+		x = p.x;
+		y = p.y;
+		z = p.z;
+		w = 1;
+	}
+	Vector operator+(Vector p)
+	{
+		if (w == 1 && p.w == 1)
+		{
+			return Vector(x + p.x, y + p.y, z + p.z);
+		}
+		else
+		{
+			return Vector(x + p.x, y + p.y, z + p.z, w + p.w);
+		}
+	}
+	Vector operator-(Vector p)
+	{
+		return Vector(x - p.x, y - p.y, z - p.z);
+	}
+	float magnitude()
+	{
+		return sqrtf(x*x + y*y + z*z);
+	}
+	Vector operator/(float n)
+	{
+		return Vector(x / n, y / n, z / n);
+	}
+
+	void normalize()
+	{
+		float magnitude = this->magnitude();
+		x = x / magnitude;
+		y = y / magnitude;
+		z = z / magnitude;
+	}
+
+	double length()
+	{
+		return sqrt(x*x + y*y + z*z);
+	}
+	Vector operator*(float n)
+	{
+		return Vector(n*x, n*y, n*z, w);
+	}
+	double dot(Vector v)
+	{
+		return x*v.x + y*v.y + z*v.z;
+	}
+
+	Vector cross(Vector v)
+	{
+		return Vector(y*v.z - z*v.y, z*v.x - x*v.z, x*v.y - y*v.x, 0);
+	}
+};
 using namespace std;
 
 
@@ -214,6 +283,15 @@ void getTangent(int slot) {
 
 	}
 }
+
+void getEnvirTex(point v,point n) {
+	Vector view = Vector(v.x - CameraRadius*cos(CameraTheta)*sin(CameraPhi), v.y - CameraRadius*cos(CameraPhi), v.z - CameraRadius*sin(CameraTheta)*sin(CameraPhi));
+	Vector normal = Vector(n.x, n.y, n.z);
+	float d = normal.dot(view);
+	Vector reflection = view - (normal * 2.0 * d);
+	float m = 2.0 * sqrtf(pow(reflection.x, 2) + pow(reflection.y, 2) + pow(reflection.z, 2));
+	glTexCoord2f((reflection.x / m + 0.5), (reflection.y / m + 0.5));
+}
 void DisplayFunc(void) 
 {
 	int slot;
@@ -318,6 +396,9 @@ void DisplayFunc(void)
 			if (selection == 3 || selection == 4) {
 				getSphericalTex(v1);
 			}
+			else if (selection == 5 || selection == 6) {
+				getEnvirTex(v1, n1);
+			}
 			else {//if (selection == 0 || selection == 1 || selection == 2) {
 				getPlanarTex(v1);
 			}
@@ -328,6 +409,9 @@ void DisplayFunc(void)
 			if (selection == 3 || selection == 4) {
 				getSphericalTex(v2);
 			}
+			else if (selection == 5 || selection == 6) {
+				getEnvirTex(v2, n2);
+			}
 			else {//if (selection == 0 || selection == 1 || selection == 2) {
 				getPlanarTex(v2);
 			}
@@ -337,6 +421,9 @@ void DisplayFunc(void)
 			
 			if (selection == 3 || selection == 4) {
 				getSphericalTex(v3);
+			}
+			else if (selection == 5 || selection == 6) {
+				getEnvirTex(v3, n3);
 			}
 			else {//if (selection == 0 || selection == 1 || selection == 2) {
 				getPlanarTex(v3);
@@ -350,6 +437,7 @@ void DisplayFunc(void)
 	setParameters(program);
 	glutSwapBuffers();
 }
+
 
 void ReshapeFunc(int x,int y)
 {
