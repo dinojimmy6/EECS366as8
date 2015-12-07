@@ -41,6 +41,8 @@ int lightSource = 0;
 int program=-1;
 
 float originX, originY, originZ;
+float maxX, minX, maxY, minY, maxZ, minZ;
+
 int selection = 0;
 //Parameters for Copper (From: "Computer Graphics Using OpenGL" BY F.S. Hill, Jr.) 
 //GLfloat ambient_cont [] = {0.19125,0.0735,0.0225};
@@ -70,12 +72,12 @@ bool MouseRight = false;
 
 
 void findOrigin(int slot) {
-	float maxX = vertList[slot][faceList[slot][0].v1].x;
-	float minX = vertList[slot][faceList[slot][0].v1].x;
-	float maxY = vertList[slot][faceList[slot][0].v1].y;
-	float minY = vertList[slot][faceList[slot][0].v1].y;
-	float maxZ = vertList[slot][faceList[slot][0].v1].z;
-	float minZ = vertList[slot][faceList[slot][0].v1].z;
+	maxX = vertList[slot][faceList[slot][0].v1].x;
+	minX = vertList[slot][faceList[slot][0].v1].x;
+	maxY = vertList[slot][faceList[slot][0].v1].y;
+	minY = vertList[slot][faceList[slot][0].v1].y;
+	maxZ = vertList[slot][faceList[slot][0].v1].z;
+	minZ = vertList[slot][faceList[slot][0].v1].z;
 	for (int i = 0; i < faces[slot]; i++)
 	{
 
@@ -143,6 +145,12 @@ void findOrigin(int slot) {
 	originX = (maxX + minX) / 2;
 	originY = (maxY + minY) / 2;
 	originZ = (maxZ + minZ) / 2;
+
+
+}
+void getTangentOnPlane() {
+	point v1 = vertList[0][faceList[0][0].v1];
+
 }
 
 void getSphericalTex(point p) {
@@ -156,7 +164,56 @@ void getSphericalTex(point p) {
 	glTexCoord2f((costheta + 1)/2, (cosphi + 1)/2);
 }
 
+void getPlanarTex(point p) {
+	glTexCoord2f((p.x - minX) / (maxX - minX), (p.y - minY) / (maxY - minY));
+	//printf("x: %f y: %f\n", (p.x - minX) / (maxX - minX), (p.y - minY) / (maxY - minY));
+}
 
+void getTangent(int slot) {
+	for (int i = 0; i < faces[slot]; i++)
+	{
+
+		glBegin(GL_TRIANGLES);
+		point v1, v2, v3, n1, n2, n3;
+		v1 = vertList[slot][faceList[slot][i].v1];
+		v2 = vertList[slot][faceList[slot][i].v2];
+		v3 = vertList[slot][faceList[slot][i].v3];
+		n1 = vertList[slot][faceList[slot][i].v1];
+		n2 = vertList[slot][faceList[slot][i].v2];
+		n3 = vertList[slot][faceList[slot][i].v3];
+		glNormal3f(n1.x, n1.y, n1.z);
+		if (selection == 3 || selection == 4) {
+			getSphericalTex(v1);
+		}
+		else if (selection == 0 || selection == 1 || selection == 2) {
+			//getPlanarTex(v1);
+		}
+		
+
+		glVertex3f(v1.x, v1.y, v1.z);
+		glNormal3f(n2.x, n2.y, n2.z);
+
+		if (selection == 3 || selection == 4) {
+			getSphericalTex(v2);
+		}
+		else if (selection == 0 || selection == 1 || selection == 2) {
+			getPlanarTex(v2);
+		}
+
+		glVertex3f(v2.x, v2.y, v2.z);
+		glNormal3f(n3.x, n3.y, n3.z);
+
+		if (selection == 3 || selection == 4) {
+			getSphericalTex(v3);
+		}
+		else if (selection == 0 || selection == 1 || selection == 2) {
+			getPlanarTex(v3);
+		}
+		glVertex3f(v3.x, v3.y, v3.z);
+		glEnd();
+
+	}
+}
 void DisplayFunc(void) 
 {
 	int slot;
@@ -192,13 +249,21 @@ void DisplayFunc(void)
 		setParameters(program);
 
 	// Load image from tga file
-	TGA *TGAImage	= new TGA("./planartexturemap/abstract2.tga");
-	//TGA *TGAImage	= new TGA("./cubicenvironmentmap/cm_right.tga");
+	TGA *TGAImage;
+	if (selection < 9) {
+		TGAImage = new TGA("./sphericaltexturemap/earth2.tga");
+	}
+	else {
+		TGAImage = new TGA("./planarbumpmap/abstract_gray2.tga");
+		//TGAImage = new TGA("./sphericaltexturemap/earth2.tga");
+	}
 
+	//TGA *TGAImage	= new TGA("./cubicenvironmentmap/cm_right.tga");
+	//TGA *TGAImage = new TGA("./cubicenvironmentmap/cm_right.tga");
 	// Use to dimensions of the image as the texture dimensions
 	uint width	= TGAImage->GetWidth();
 	uint height	= TGAImage->GetHeigth();
-	
+	printf("width: %d height: %d\n", width, height);
 	// The parameters for actual textures are changed
 
 	glGenTextures(1, &id);
@@ -218,10 +283,16 @@ void DisplayFunc(void)
 
 
 	// Finaly build the mipmaps
-	glTexImage2D (GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, TGAImage->GetPixels());
+	if (selection < 9) {
+		glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, TGAImage->GetPixels());
 
-	gluBuild2DMipmaps(GL_TEXTURE_2D, 4, width, height, GL_RGBA, GL_UNSIGNED_BYTE, TGAImage->GetPixels());
+		gluBuild2DMipmaps(GL_TEXTURE_2D, 4, width, height, GL_RGBA, GL_UNSIGNED_BYTE, TGAImage->GetPixels());
+	}
+	else {
+		glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, TGAImage->GetPixels());
 
+		gluBuild2DMipmaps(GL_TEXTURE_2D, 4, width, height, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, TGAImage->GetPixels());
+	}
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	glEnable( GL_TEXTURE_2D );
@@ -244,20 +315,32 @@ void DisplayFunc(void)
 			n2 = vertList[slot][faceList[slot][i].v2];
 			n3 = vertList[slot][faceList[slot][i].v3];
 			glNormal3f(n1.x, n1.y, n1.z);
-			//glTexCoord2f(v1.x, v1.y);
-			getSphericalTex(v1);
+			if (selection == 3 || selection == 4) {
+				getSphericalTex(v1);
+			}
+			else {//if (selection == 0 || selection == 1 || selection == 2) {
+				getPlanarTex(v1);
+			}
 
 			glVertex3f(v1.x, v1.y, v1.z);
 			glNormal3f(n2.x, n2.y, n2.z);
 		
-			//glTexCoord2f(v2.x, v2.y);
-			getSphericalTex(v2);
+			if (selection == 3 || selection == 4) {
+				getSphericalTex(v2);
+			}
+			else {//if (selection == 0 || selection == 1 || selection == 2) {
+				getPlanarTex(v2);
+			}
 		
 			glVertex3f(v2.x, v2.y, v2.z);
 			glNormal3f(n3.x, n3.y, n3.z);
 			
-			//glTexCoord2f(v3.x, v3.y);
-			getSphericalTex(v3);
+			if (selection == 3 || selection == 4) {
+				getSphericalTex(v3);
+			}
+			else {//if (selection == 0 || selection == 1 || selection == 2) {
+				getPlanarTex(v3);
+			}
 			glVertex3f(v3.x, v3.y, v3.z);
 		glEnd();
 
@@ -395,11 +478,11 @@ int main(int argc, char **argv)
     glutKeyboardFunc(KeyboardFunc);
 
 	
-	setShaders();
-	meshReader("sphere.obj", 1, 0); //temp
+
+	meshReader("plane.txt", 1, 0); //temp
 	meshReader("sphere.obj", 1, 1);
 	meshReader("teapot.obj", 1, 2);
-
+	setShaders();
 	glutMainLoop();
 
 	return 0;
@@ -550,11 +633,16 @@ void setParameters(GLuint program)
 {
 	int light_loc;
 	int ambient_loc,diffuse_loc,specular_loc;
+	int mode_loc;
 	int exponent_loc;
 
 	//sample variable used to demonstrate how attributes are used in vertex shaders.
 	//can be defined as gloabal and can change per vertex
-	float tangent = 0.0;
+	float tangentx, tangenty, tangentz;
+	point v1 = vertList[0][faceList[0][0].v1];
+	point v2 = vertList[0][faceList[0][0].v2];
+	point tangentvec = { v2.x - v1.x, v2.y - v1.y, v2.z - v1.z };
+	tangentx = -1.0; tangenty = tangentvec.y; tangentz = tangentvec.z;
 	float tangent_loc;
 
 	update_Light_Position();
@@ -568,14 +656,26 @@ void setParameters(GLuint program)
 
 	specular_loc = getUniformVariable(program, "SpecularContribution");
 	glUniform3fvARB(specular_loc,1,specular_cont);
-
+	
+	mode_loc = getUniformVariable(program, "selection1");
+	printf("falied in exp\n");
+	glUniform1iARB(mode_loc, selection);
+	
 	exponent_loc = getUniformVariable(program, "exponent");
 	glUniform1fARB(exponent_loc,exponent);
 
-	//Access attributes in vertex shader
-	tangent_loc = glGetAttribLocationARB(program,"tang");
-	glVertexAttrib1fARB(tangent_loc,tangent);
+	
 
+	//Access attributes in vertex shader
+	tangent_loc = glGetAttribLocationARB(program,"tangx");
+	glVertexAttrib1fARB(tangent_loc,tangentx);
+
+	tangent_loc = glGetAttribLocationARB(program, "tangy");
+	glVertexAttrib1fARB(tangent_loc, tangenty);
+
+	tangent_loc = glGetAttribLocationARB(program, "tangy");
+	glVertexAttrib1fARB(tangent_loc, tangentz);
+	printf("tanx: %f tany: %f tanz: %f\n", tangentx, tangenty, tangentz);
 	GLint tex = glGetUniformLocationARB(program, "tex");
 	glUniform1iARB(tex, 0);
 

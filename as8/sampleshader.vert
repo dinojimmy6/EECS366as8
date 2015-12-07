@@ -1,10 +1,10 @@
    
 uniform vec3 AmbientContribution,DiffuseContribution,SpecularContribution;
 uniform float exponent;
+uniform int selection1;
+attribute float tangx, tangy, tangz;
 
-attribute float tang;
-
-varying vec3 vNormal, vLight, vView, vHalfway;
+varying vec3 vNormal, vLight, vView, vHalfway, vLightTSpace, vViewTSpace, vHalfwayTSpace;
 
 //uniform sampler2D tex;
 /*
@@ -26,11 +26,17 @@ void main(void)
    vView     = normalize(-pos);
    
    // Compute the halfway vector if the halfway approximation is used   
-   
+   vec3 tang = vec3(tangx, tangy, tangz);
+   vec3 bin = cross(tang, vNormal);
+   //if(mode == 9 || mode == 10) {
+	 mat3 TBN = transpose(mat3(tang, bin, vNormal));
+	vLightTSpace = TBN * vLight;
+	 vViewTSpace = TBN * vView;
+	 vHalfwayTSpace = normalize(vLightTSpace + vViewTSpace);
+   //}
    vHalfway  = normalize(vLight + vView );
-	
-   float data_from_opengl = tang;
-
+	float boo = selection1;
+   
    gl_TexCoord[0] = gl_MultiTexCoord0;
 
    gl_Position = ftransform();
