@@ -327,17 +327,31 @@ void DisplayFunc(void)
 		setParameters(program);
 
 	// Load image from tga file
-	TGA *TGAImage;
-	if (selection < 9) {
-		TGAImage = new TGA("./sphericaltexturemap/earth2.tga");
+	char* file;
+	if (selection == 0 || selection == 1 || selection == 2) {
+		file = "./planartexturemap/abstract2.tga";
+	}
+	else if (selection == 3 || selection == 4) {
+		file = "./sphericaltexturemap/earth2.tga";
+	}
+	else if (selection == 5 || selection == 6) {
+		file = "./sphericalenvironmentmap/house2.tga";
+	}
+	else if (selection == 7 || selection == 8) {
+		file = "./sphericalenvironmentmap/house2.tga";// need to change
+	}
+	else if (selection == 9) {
+		file = "./planarbumpmap/abstract_gray2.tga";
+	}
+	else if (selection == 10) {
+		file = "./sphericalbumpmap/earth_gray2.tga";
 	}
 	else {
-		TGAImage = new TGA("./planarbumpmap/abstract_gray2.tga");
-		//TGAImage = new TGA("./sphericaltexturemap/earth2.tga");
+		error_exit(-1, "selection error");
 	}
 
-	//TGA *TGAImage	= new TGA("./cubicenvironmentmap/cm_right.tga");
-	//TGA *TGAImage = new TGA("./cubicenvironmentmap/cm_right.tga");
+	TGA *TGAImage;
+	TGAImage = new TGA(file);
 	// Use to dimensions of the image as the texture dimensions
 	uint width	= TGAImage->GetWidth();
 	uint height	= TGAImage->GetHeigth();

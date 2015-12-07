@@ -1,4 +1,4 @@
-﻿Build started 12/6/2015 9:59:43 PM.
+﻿Build started 12/6/2015 10:17:59 PM.
      1>Project "C:\Users\Evan Chen\Desktop\GitHub\EECS366as8\as8\as8.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt assign8_temp.cpp
@@ -6,22 +6,22 @@
      1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(118): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
      1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(121): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
      1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(123): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(456): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(458): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(722): warning C4101: 'light_loc': unreferenced local variable
-     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(782): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(470): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(472): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(736): warning C4101: 'light_loc': unreferenced local variable
+     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(796): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
          c:\program files (x86)\windows kits\10\include\10.0.10150.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(824): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(838): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
          c:\program files (x86)\windows kits\10\include\10.0.10150.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(833): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(847): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
          c:\program files (x86)\windows kits\10\include\10.0.10150.0\ucrt\stdio.h(1193): note: see declaration of 'fscanf'
-     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(846): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'int *'
-     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(847): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'int *'
-     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(854): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(860): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'int *'
+     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(861): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'int *'
+     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(868): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
          c:\program files (x86)\windows kits\10\include\10.0.10150.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(859): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(873): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
          c:\program files (x86)\windows kits\10\include\10.0.10150.0\ucrt\stdio.h(1193): note: see declaration of 'fscanf'
-     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(868): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\evan chen\desktop\github\eecs366as8\as8\assign8_temp.cpp(882): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
          c:\program files (x86)\windows kits\10\include\10.0.10150.0\ucrt\stdio.h(1193): note: see declaration of 'fscanf'
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Evan Chen\Desktop\GitHub\EECS366as8\as8\Debug\as8.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib opengl32.lib glut32.lib glu32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\Evan Chen\Desktop\GitHub\EECS366as8\as8\Debug\as8.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Evan Chen\Desktop\GitHub\EECS366as8\as8\Debug\as8.lib" /MACHINE:X86 Debug\assign8_temp.obj
@@ -33,4 +33,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.83
+Time Elapsed 00:00:02.20
